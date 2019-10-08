@@ -41,8 +41,14 @@ run:
     cat /var/version && echo ""
     set -eux
 
-    expected_version=$(bosh int download-config/${DOWNLOAD_CONFIG_FILE} --path /product-version)
-    expected_product=$(bosh int config/${CONFIG_FILE} --path /product-name)
+    vars_files_args=("")
+    for vf in ${VARS_FILES}
+    do
+      vars_files_args+=("--vars-file ${vf}")
+    done
+
+    expected_version=$(bosh int download-config/${DOWNLOAD_CONFIG_FILE} --path /product-version ${vars_files_args[@]})
+    expected_product=$(bosh int config/${CONFIG_FILE} --path /product-name ${vars_files_args[@]})
 
     staged_products=$(mktemp)
     om --env env/"${ENV_FILE}" staged-products -f json > ${staged_products}
@@ -50,12 +56,6 @@ run:
     set +e
     staged_version=$(bosh int ${staged_products} --path /name=${expected_product}/version)
     set -e
-
-    vars_files_args=("")
-    for vf in ${VARS_FILES}
-    do
-      vars_files_args+=("--vars-file ${vf}")
-    done
 
     if [ "${expected_version}" = "${staged_version}" ]; then
       echo "${expected_version} already staged"
@@ -108,7 +108,7 @@ run:
     fi
 
     if [ -f "download-config/${DOWNLOAD_STEMCELL_CONFIG_FILE}" ]; then
-      expected_stemcell_version=$(bosh int download-config/${DOWNLOAD_STEMCELL_CONFIG_FILE} --path /product-version)
+      expected_stemcell_version=$(bosh int download-config/${DOWNLOAD_STEMCELL_CONFIG_FILE} --path /product-version ${vars_files_args[@]})
       stemcell_assignments=$(mktemp)
       om --env env/"${ENV_FILE}" curl -p /api/v0/stemcell_assignments > ${stemcell_assignments}
       set +e
