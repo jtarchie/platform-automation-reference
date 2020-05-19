@@ -38,3 +38,23 @@ Used to store opsmanager state.yml file leveraged by create-vm task.  State fold
 * `make-commit` - this task avoids committing state.yml using `porcelain` option, PR has been accepted so this task will be replace with platform-automation task once it's shipped
 
 * `run-errand` - this task will run an errand via bosh cli
+
+## Deprecated
+
+### Direct Replacements
+* `update-runtime-config` is directly replaced by Platform Automation's
+  [`update-runtime-config`](https://docs.pivotal.io/platform-automation/v4.4/tasks.html#update-runtime-config) task.
+* `credhub-interpolate` is directly replaced by Platform Automation's
+  [`credhub-interpolate`](https://docs.pivotal.io/platform-automation/v4.4/tasks.html#credhub-interpolate) task.
+  Another replacement which uses Concourse's native credential management integration is available in [`prepare-tasks-with-secrets`](https://docs.pivotal.io/platform-automation/v4.4/tasks.html#prepare-tasks-with-secrets).
+* `make-commit` is directly replaced by Platform Automation's
+  [`make-git-commit`](https://docs.pivotal.io/platform-automation/v4.4/tasks.html#make-git-commit) task.
+
+  
+### Functional Alternatives
+* `apply-product-changes` has the ability to apply changes to a only one specific product.
+  This can be done in Platform Automation
+  with the [`stage-configure-apply`](https://docs.pivotal.io/platform-automation/v4.3/tasks.html#stage-configure-apply) task.
+* `download-stage-tile-replicator` will download and replicate a product.
+  This can be done by combining [`download-product`](https://docs.pivotal.io/platform-automation/v4.4/tasks.html#download-product) and
+  [`replicate-product`](https://docs.pivotal.io/platform-automation/v4.4/tasks.html#replicate-product) task from Platform Automation.
